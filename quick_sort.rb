@@ -34,9 +34,10 @@ class Array
 		# Median of three as pivot
 		elsif @technique == "median"
 			Array.median_of_three range, arr
-		# Median of three as pivot
 		elsif @technique == "median2"
 			Array.median_of_three_2 range, arr
+		elsif @technique == "median3"
+			Array.median_of_three_3 range, arr
 		end
 	end
 
@@ -44,35 +45,30 @@ class Array
 		f_i, l_i, s = range.first, range.last, range.size
 
 		if s % 2 == 0
-			m_i = s / 2 - 1
-			m_i += f_i
+			m_i = (s / 2) - 1 + f_i
 		else
-			m_i = s / 2 
-			m_i += f_i
+			m_i = (s / 2) + f_i
 		end
 
 		f, m, l = arr[f_i], arr[m_i], arr[l_i]
 
-		if (m < f && m > l) || (m < l && m > f)
+		if (f <= m && m <= l) || (l <= m && m <= f)
 			median = m
-		elsif (l < f && l > m) || (l < m && l > f)
+		elsif (f <= l && l <= m) || (m <= l && l <= f)
 			median = l
-		elsif (f < l && f > m) || (f < m && f > l)
+		elsif (l <= f && f <= m) || (m <= f && f <= l)
 			median = f
 		end
-
-		return median
+		median
 	end
 
 	def self.median_of_three_2 range, arr
 		f_i, l_i, s = range.first, range.last, range.size
 
 		if s % 2 == 0
-			m_i = s / 2 - 1
-			m_i += f_i
+			m_i = (s / 2) - 1 + f_i
 		else
-			m_i = s / 2
-			m_i += f_i 
+			m_i = (s / 2) + f_i
 		end
 
 		f, m, l = arr[f_i], arr[m_i], arr[l_i]
@@ -86,6 +82,20 @@ class Array
 		end
 
 		return median
+	end
+
+	def self.median_of_three_3 range, arr
+		f_i, l_i, s = range.first, range.last, range.size
+
+		if s % 2 == 0
+			m_i = (s / 2) - 1 + f_i
+		else
+			m_i = (s / 2) + f_i
+		end
+
+		f, m, l = arr[f_i], arr[m_i], arr[l_i]
+		fml = [f,m,l].sort
+		return fml[1]
 	end
 
 	# The recursive call, takes the array and the bounds 
@@ -140,15 +150,18 @@ a1 = (0..10000).to_a.shuffle(random: Random.new(1))
 p a1.comparisons "first"
 p a1.comparisons "random"
 p a1.comparisons "median2"
+p a1.comparisons "median3"
 p a1.comparisons "median"
-p Array.median_of_three((0..4), [1,5,3,4,5])
-p Array.median_of_three((0..3), [1,2,3,4])
+p Array.median_of_three((1..5), [1,2,3,4,5,6])
+p Array.median_of_three((10..13), [1,2,3,4,5,6,7,8,9,10,11,12,13,14])
 =end
 
 
 
+
+
 # Algorithms I Problem Set 2, number of comparisons 
-=begin
+
 
 data = []
 File.open("quick_sort_data.txt").each_line do |line|
@@ -157,9 +170,11 @@ end
 
 p "last: ", data.comparisons("last")
 p "first: ", data.comparisons("first")
+p "median: ", data.comparisons("median")
 p "median: ", data.comparisons("median2")
+p "median: ", data.comparisons("median3")
 p "random: ", data.comparisons("random")
-=end
+
 
 
 
@@ -173,17 +188,21 @@ Benchmark.bm(20) do |x|
 	x.report("my quick ") { a2.quick_sort }
 end
 =end
-
 =begin
-a2 = (0..10000).to_a.shuffle(random: Random.new(1))
-Benchmark.bm(20) do |x|
-	x.report("quick first ") { a2.quick_sort "first" }
-	x.report("quick random") { a2.quick_sort "random" }
-	x.report("quick median") { a2.quick_sort "median" }
-	x.report("quick median2") { a2.quick_sort "median2" }
+a2 = (0..100000).to_a.shuffle(random: Random.new(1))
+Benchmark.bmbm do |x|
+	# x.report("quick first ") { a2.quick_sort "first" }
+	# x.report("quick random") { a2.quick_sort "random" }
+	# x.report("quick median") { a2.quick_sort "median" }
+	# x.report("quick median2") { a2.quick_sort "median2" }
+	# x.report("quick median3") { a2.quick_sort "median3" }
+	x.report("quick first:   ") { p a2.comparisons "first" }
+	x.report("quick random:  ") { p a2.comparisons "random" }
+	x.report("quick median:  ") { p a2.comparisons "median" }
+	x.report("quick median2: ") { p a2.comparisons "median2" }
+	x.report("quick median3: ") { p a2.comparisons "median3" }
 end
 =end
-
 
 
 # Test case
