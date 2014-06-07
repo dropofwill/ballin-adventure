@@ -25,9 +25,15 @@ class Array
 	def recursive_partition arr, low, high
 		# The current partition of the array
 		range = (low..high)
+		
 		# The pivot by which this recursive call will sort
 		pivot_index = choose_pivot(range)
 		pivot_value = arr[pivot_index]
+		
+		# Move the pivot to the beginning of the partition 
+		arr.swap! pivot_index, low
+		pivot_index = low
+
 		# i is the index keeping track of where the pivot should be moved
 		# j is the index keeping track of our pass through the partition
 		i = j = low
@@ -86,11 +92,10 @@ end
 
 
 
-a2 = (1..10).to_a.shuffle
+p a2 = (0..5).to_a.shuffle(random: Random.new(1))
 sys = a2.sort
 quick = a2.quick_sort
-a2.quick_sort!
 
 p quick
 
-p sys == a2, sys == quick
+p sys == quick
