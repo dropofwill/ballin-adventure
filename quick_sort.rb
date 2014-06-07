@@ -1,3 +1,6 @@
+require "benchmark"
+require_relative "inversion_counter"
+
 class Array
 	def quick_sort
 		recursive_partition self.dup, 0, self.length-1
@@ -17,7 +20,9 @@ class Array
 	# Most important function in terms of impact on running time
 	def choose_pivot range
 		# range.first
-		range.last
+		# range.last
+		# Average O(nlogn)
+		range.first+rand(range.size)
 	end
 
 	# The recursive call, takes the array and the bounds 
@@ -44,10 +49,14 @@ class Array
 		else
 		# Otherwise scan through the partition looking for values less than
 		# the pivot and swapping when this is the case
+			greater_than_pivot = false
+			
 			while j <= high do
 				if arr[j] <= pivot_value
 					arr.swap! i, j
 					i += 1
+				else
+					greater_than_pivot = true
 				end
 				j += 1
 			end
@@ -61,41 +70,23 @@ class Array
 
 		return arr
 	end
-
-	# Version that works on self instead of an duplicate
-	def recursive_partition! low, high
-		range = (low..high)
-		pivot_index = choose_pivot(range)
-		pivot_value = self[pivot_index]
-		i = j = low
-
-		if range.size <=2
-			swap!(i, i+1) if self[i+1] < self[i]
-		else
-			while j <= high do
-				if self[j] <= pivot_value
-					swap! i, j
-					i += 1
-				end
-				j += 1
-			end
-
-			swap! pivot_index, i-1
-			pivot_index = i-1
-
-			recursive_partition!(low, pivot_index-1) unless low >= pivot_index-1
-			recursive_partition!(pivot_index+1, high) unless pivot_index+1 >= high
-		end
-	end
 end
 
 
+# a2 = (0..1000000).to_a.shuffle(random: Random.new(1))
 
 
-p a2 = (0..5).to_a.shuffle(random: Random.new(1))
-sys = a2.sort
-quick = a2.quick_sort
+# Benchmark.bm(20) do |x|
+# 	x.report("sys merge") { a2.sort }
+# 	# x.report("my merge ") { a2.merge_sort }
+# 	# x.report("my merge!") { a2.merge_sort }
+# 	x.report("my quick ") { a2.quick_sort }
+# end
+
+a1 = (0..10).to_a.shuffle(random: Random.new(1))
+
+sys = a1.sort
+quick = a1.quick_sort
 
 p quick
-
 p sys == quick
