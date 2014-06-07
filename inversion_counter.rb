@@ -73,6 +73,18 @@ class Array
   end
 end
 
+
+=begin
+data = []
+
+File.open("inversion_data.txt").each_line do |line|
+  data << line.chomp.to_i
+end
+
+p data.inversions
+=end
+
+
 # Test Cases for merge_sort, merge_sort!
 =begin
 a1 = [1,2,3,2,4,3]

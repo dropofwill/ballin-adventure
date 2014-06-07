@@ -10,6 +10,7 @@ class Vector
 	end
 end
 
+
 # Simple data structure for storing 2 vectors and
 # calculating the distance between them.
 class Pair
@@ -26,6 +27,7 @@ class Pair
 	end
 end
 
+
 # Generate an array of test data
 def generate_vectors size_range, int_range = (0..20)
 	vector_array = []
@@ -35,6 +37,7 @@ def generate_vectors size_range, int_range = (0..20)
 	return vector_array
 end
 
+
 # The function that kicks off the first recursive call
 def closest_pair vector_array
 	by_x = vector_array.sort_by { |e| e.x }
@@ -43,6 +46,7 @@ def closest_pair vector_array
 	array, best = recursive_split by_x
 	p "Da #{best.distance}"
 end
+
 
 def recursive_split array, best_pair = nil
 	length = array.length
@@ -63,6 +67,7 @@ def recursive_split array, best_pair = nil
 
   right, right_best = recursive_split right
   left, left_best  = recursive_split left
+  # Calc min(right_best, left_best)
   # split_best = closest_split_pair array
 
   return right + left, left_best.distance < right_best.distance ? left_best : right_best
@@ -88,6 +93,12 @@ def brute_force_closest_pair array
 
 	return best
 end
+
+def min *nums
+	nums.min
+end
+
+p min 10, 8, 7
 
 # brute_force_closest_pair generate_vectors (0..3)
 # brute_force_closest_pair [Vector.new(0,1)]
