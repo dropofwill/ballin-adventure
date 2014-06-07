@@ -73,7 +73,7 @@ class Array
   end
 end
 
-
+# Algorithms I Problem set 1
 =begin
 data = []
 
@@ -110,7 +110,6 @@ i1 = a3.inversions
 i2 = a4.inversions
 i3 = a5.inversions
 
-p "----results----"
 p i1, i1 == 3
 p i2, i2 == 0
 p i3, i3 == 1
