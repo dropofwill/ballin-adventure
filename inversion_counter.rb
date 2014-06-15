@@ -1,7 +1,7 @@
 class Array
   # Run merge_sort non-destructively to get inversions
-  # This runs in O(NlogN) which is better than finding 
-  # inversions naively O(N^2) so while the sort may semm
+  # This runs in O(nlogn) which is better than finding 
+  # inversions naively O(n^2) so while the sort may semm
   # wasteful it turns out to be the most efficient way to
   # count the inversions.
   def inversions
