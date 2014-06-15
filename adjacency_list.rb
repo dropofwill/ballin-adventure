@@ -3,6 +3,7 @@ class AdjList
 		@adj_list = vertex_hash 
 		@directed = directed
 		@weighted = weighted
+		@valid = nil
 		@handle_broken_links = broken_links
 		@broken_links = {}
 		
@@ -11,41 +12,41 @@ class AdjList
 
 	def valid_edges?
 		@adj_list.each do |vertex, vertex_list|
+			p "#{vertex} => #{vertex_list}"
 			vertex_list.each do |adj|
-				 #p "Vertex #{vertex}, Edge to Vertex #{adj}"
-				
+				p "Missing: #{vertex} => #{adj}"
+
 				if !@adj_list.has_key? adj
-					p "Missing: #{vertex} => #{adj}"
-					handle_broken_links vertex, adj, :missing_vertex
+					save_broken_link vertex, adj
 				elsif !@directed && !@adj_list[adj].include?(vertex)
-					handle_broken_links vertex, adj, :missing_ref
+					save_broken_link vertex, adj
 				end
 			end
 		end
+		handle_broken_links 
+		@valid
 	end
 
 	private
-	def handle_broken_links vertex, adj_vertex, type
+	def save_broken_link vertex, adj_vertex
+		if @broken_links[vertex].nil? 
+			@broken_links[vertex] = [adj_vertex]
+		else
+			@broken_links[vertex] << adj_vertex
+		end
+	end
+
+	def handle_broken_links 
 		case @handle_broken_links 
 		when :ignore
-			if type == :missing_vertex
-				p "Vertex #{adj_vertex} doesn't exist"
-				@broken_links[vertex] = adj_vertex
-			elsif type == :missing_ref
-				p "Vertex #{adj_vertex} missing cross reference to #{vertex}" if type == :missing_ref
-				@broken_links[adj_vertex] = vertex
-			end
+			@broken_links.empty? ? @valid = true : @valid = false
 		when :fix
 		when :prune
-			if type == :missing_vertex
-				p "Missing: Deleted #{vertex} => #{adj_vertex}"
-				@adj_list[vertex].delete(adj_vertex)
-				@broken_links[vertex] = adj_vertex
-			elsif type == :missing_ref
-				p "Cross Ref: Deleted #{vertex} => #{adj_vertex}"
-				#@adj_list[vertex].delete(adj_vertex)
-				#@broken_links[vertex] = adj_vertex
+			@adj_list.each do |v, a_v| 
+				sym_diff = @broken_links[v] - a_v | a_v - @broken_links[v]
+				p @adj_list[v] = sym_diff
 			end
+			@valid = true
 		end
 	end
 end
