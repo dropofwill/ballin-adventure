@@ -1,5 +1,8 @@
+require "forwardable"
+
 class AdjList
-	def initialize vertex_hash, directed: false, broken_links: :ignore, weighted: false
+	extend Forwardable
+	def initialize vertex_hash, directed: false, weighted: false, broken_links: :ignore
 		@adj_list = vertex_hash 
 		@directed = directed
 		@weighted = weighted
@@ -8,23 +11,35 @@ class AdjList
 		@broken_links = {}
 		
 		valid_edges?
+		self
 	end
+
+	def_delegators :adj_list, :[], :[]=, :has_key?, :has_value?, :length
+	attr_accessor :adj_list, :directed, :weighted, :valid, :handle_broken_links, :broken_links
 
 	def valid_edges?
 		@adj_list.each do |vertex, vertex_list|
 			p "#{vertex} => #{vertex_list}"
-			vertex_list.each do |adj|
-				p "Missing: #{vertex} => #{adj}"
 
-				if !@adj_list.has_key? adj
+			vertex_list.each do |adj|
+				if !@adj_list.has_key? adj.keys[0]
+					p "Vertex missing #{adj.keys[0]}"
 					save_broken_link vertex, adj
-				elsif !@directed && !@adj_list[adj].include?(vertex)
+				elsif !@directed && !@adj_list[adj].has_key?(vertex)
+					p "Vertex cross reference"
 					save_broken_link vertex, adj
 				end
 			end
 		end
 		handle_broken_links 
 		@valid
+	end
+	
+	def min_cuts
+	end
+
+	def contract_edge vertex_1, vertex_2
+		
 	end
 
 	private
@@ -40,28 +55,32 @@ class AdjList
 		case @handle_broken_links 
 		when :ignore
 			@broken_links.empty? ? @valid = true : @valid = false
-		when :fix
+		when :add
+			# TODO
 		when :prune
-			@adj_list.each do |v, a_v| 
-				sym_diff = @broken_links[v] - a_v | a_v - @broken_links[v]
-				p @adj_list[v] = sym_diff
+			if !@broken_links.empty?
+				@adj_list.each do |v, a_v| 
+					sym_diff = @broken_links[v] - a_v | a_v - @broken_links[v]
+					@adj_list[v] = sym_diff
+				end
 			end
 			@valid = true
 		end
 	end
 end
 
-#p AdjList.new({ 0 => [1], 1 => [0,2,3], 2 => [1], 3 => [0,1] })
-
 vertices = {}
-File.open("kargerMinCut_data_simple.txt").each_line do |line|
+File.open("kargerMinCut_data.txt").each_line do |line|
 	vertex = line.gsub(/\s+/, ' ').strip.split(" ")
 	vertex.map! { |i| i.to_i }
 	c_v = vertex.shift
 	vertex.sort!
+	vertex.map! { |i| {i => 1} }
 	vertices[c_v] = vertex	
 end
-p AdjList.new(vertices, broken_links: :prune)
+
+a = AdjList.new(vertices)
+a[1]
 
 
 #adj_list = AdjList.new data
