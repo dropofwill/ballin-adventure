@@ -75,12 +75,12 @@ File.open("kargerMinCut_data.txt").each_line do |line|
 	vertex.map! { |i| i.to_i }
 	c_v = vertex.shift
 	vertex.sort!
-	vertex.map! { |i| {i => 1} }
 	vertices[c_v] = vertex	
 end
+p vertices
 
-a = AdjList.new(vertices)
-a[1]
+#a = AdjList.new(vertices)
+#a[1]
 
 
 #adj_list = AdjList.new data
