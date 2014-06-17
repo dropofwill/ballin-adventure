@@ -1,11 +1,12 @@
 require 'set'
 
 class AdjList
-	attr_accessor :vertex_hash
+	attr_accessor :vertex_hash, :min_cut, :min_cut_hash
 
 	def initialize vertex_hash
 		@vertex_hash = vertex_hash
 		@min_cut = nil
+		@min_cut_hash = nil
 	end
 	
 	def prob_min_cut attempts = 100
@@ -21,6 +22,7 @@ class AdjList
 			vert1, vert2 = random_edge a_hash
 			a_hash, temp_min_cut = contract_edge a_hash, vert1, vert2
 		end
+		@min_cut_hash = a_hash if @min_cut_hash.nil? || @min_cut > temp_min_cut
 		@min_cut = temp_min_cut if @min_cut.nil? || @min_cut > temp_min_cut
 	end
 
@@ -83,3 +85,5 @@ end
 
 a = AdjList.new vertices
 p a.prob_min_cut
+p a.min_cut
+p a.min_cut_hash.values
