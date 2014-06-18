@@ -29,7 +29,7 @@ end
 verts = {}
 edges = []
 adj_verts = []
-File.open("kargerMinCut_data.txt").each_line do |line|
+File.open("data/kargerMinCut_data.txt").each_line do |line|
 	vertex = line.gsub(/\s+/, ' ').strip.split(" ")
 	vertex.map! { |i| i.to_i }
 	c_v = vertex.shift

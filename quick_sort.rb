@@ -162,7 +162,7 @@ p Array.median_of_three((10..13), [1,2,3,4,5,6,7,8,9,10,11,12,13,14])
 # Algorithms I Problem Set 2, number of comparisons 
 
 #data = []
-#File.open("quick_sort_data.txt").each_line do |line|
+#File.open("data/quick_sort_data.txt").each_line do |line|
   #data << line.chomp.to_i
 #end
 

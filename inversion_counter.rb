@@ -77,7 +77,7 @@ end
 =begin
 data = []
 
-File.open("inversion_data.txt").each_line do |line|
+File.open("data/inversion_data.txt").each_line do |line|
   data << line.chomp.to_i
 end
 
