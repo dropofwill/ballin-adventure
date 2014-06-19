@@ -18,7 +18,7 @@ class AdjList
 		@min_cut
 	end
 
-	# Duplicate hash, randomly merging to adjacent 
+	# Duplicate hash, randomly merging adjacent 
 	# vertices until only two remain
 	def find_min_cut
 		a_hash = @vertex_hash.dup
