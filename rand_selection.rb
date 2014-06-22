@@ -1,9 +1,11 @@
+require_relative 'deep_dup'
+
 class Array
 	# Modified version of Quick Sort to find the ith smallest element
 	# of an array. With random pivots it runs on average O(n)
 	
 	def rselect ith
-		recursive_rselect self.dup, 0, self.length-1, ith
+		recursive_rselect self.deep_dup, 0, self.length-1, ith
 	end
 
 	def swap! i, j

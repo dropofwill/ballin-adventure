@@ -1,3 +1,5 @@
+require_relative 'deep_dup'
+
 class Array
   # Run merge_sort non-destructively to get inversions
   # This runs in O(nlogn) which is better than finding 
@@ -16,7 +18,7 @@ class Array
   # inversions along the way
   def merge_sort
     @inversions = 0
-    recursive_split self.dup
+    recursive_split self.deep_dup
   end
 
   # By flattening afterwards this is actually slower

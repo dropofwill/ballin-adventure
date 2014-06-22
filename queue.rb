@@ -5,7 +5,11 @@ class Queue
 	extend Forwardable
 
 	def initialize array = []
-		@q = array
+		if array.is_a?(Array)
+			@q = array 
+		else
+			@q = [array]
+		end
 	end
 	
 	def_delegator :@q, :push, :enq

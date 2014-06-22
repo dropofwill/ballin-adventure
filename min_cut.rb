@@ -1,4 +1,5 @@
 require 'set'
+require_relative 'deep_dup'
 
 class AdjList
 	attr_accessor :vertex_hash, :min_cut, :min_cut_hash
@@ -21,12 +22,12 @@ class AdjList
 	# Duplicate hash, randomly merging adjacent 
 	# vertices until only two remain
 	def find_min_cut
-		a_hash = @vertex_hash.dup
-		while a_hash.count > 2
-			vert1, vert2 = random_edge a_hash
-			a_hash, temp_min_cut = contract_edge a_hash, vert1, vert2
+		hash = @vertex_hash.deep_dup
+		while hash.count > 2
+			vert1, vert2 = random_edge hash
+			hash, temp_min_cut = contract_edge hash, vert1, vert2
 		end
-		@min_cut_hash = a_hash if @min_cut_hash.nil? || @min_cut > temp_min_cut
+		@min_cut_hash = hash if @min_cut_hash.nil? || @min_cut > temp_min_cut
 		@min_cut = temp_min_cut if @min_cut.nil? || @min_cut > temp_min_cut
 	end
 
@@ -72,34 +73,35 @@ class AdjList
 end
 
 
-#a_graph = {
-	#Set.new([1]) => [2, 5, 10],
-	#Set.new([2]) => [1, 8, 9],
-	#Set.new([3]) => [4, 5, 6],
-	#Set.new([4]) => [3],
-	#Set.new([5]) => [1, 3, 7, 9, 10],
-	#Set.new([6]) => [3, 7],
-	#Set.new([7]) => [5, 6],
-	#Set.new([8]) => [2, 10],
-	#Set.new([9]) => [2, 5, 10],
-	#Set.new([10]) => [1, 5, 8, 9]
-#}
+a_graph = {
+	Set.new([1]) => [2, 5, 10],
+	Set.new([2]) => [1, 8, 9],
+	Set.new([3]) => [4, 5, 6],
+	Set.new([4]) => [3],
+	Set.new([5]) => [1, 3, 7, 9, 10],
+	Set.new([6]) => [3, 7],
+	Set.new([7]) => [5, 6],
+	Set.new([8]) => [2, 10],
+	Set.new([9]) => [2, 5, 10],
+	Set.new([10]) => [1, 5, 8, 9]
+}
 
-#a = AdjList.new(a_graph)
-#p a.prob_min_cut
-#p a.vertex_hash
-
-vertices = {}
-File.open("data/kargerMinCut_data.txt").each_line do |line|
-	vertex = line.gsub(/\s+/, ' ').strip.split(" ")
-	vertex.map! { |i| i.to_i }
-	c_v = vertex.shift
-	vertex.sort!
-	ref = Set.new [c_v]
-	vertices[ref] = vertex	
-end
-
-a = AdjList.new vertices
+a = AdjList.new(a_graph)
 p a.prob_min_cut
-p a.min_cut
-p a.min_cut_hash.values
+p a.vertex_hash
+
+#vertices = {}
+#File.open("data/kargerMinCut_data.txt").each_line do |line|
+	#vertex = line.gsub(/\s+/, ' ').strip.split(" ")
+	#vertex.map! { |i| i.to_i }
+	#c_v = vertex.shift
+	#vertex.sort!
+	#ref = Set.new [c_v]
+	#vertices[ref] = vertex	
+#end
+
+#a = AdjList.new vertices
+#p a.prob_min_cut
+#p a.min_cut
+#p a.min_cut_hash.values
+#p a.vertex_hash
