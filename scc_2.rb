@@ -15,7 +15,7 @@ class Graph
 
 		graph.each do |(v1,v2)|
 			@graph[v1].neighbours << v2
-			@rev[v2].neighbours   << v1
+			@rev[v2].neighbours		<< v1
 		end
 		return @graph
 	end
