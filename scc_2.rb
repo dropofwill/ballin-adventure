@@ -29,16 +29,16 @@ class Graph
 		@s = nil
 		@f_times = []
 
-		@rev.each_with_index do |vertex,i|
+		@rev.each do |key,vertex|
 			if ! vertex.expl 
-				dfs @rev, i 
+				dfs @rev, vertex 
 			end
 		end
 
-		@f_times.each_with_index do |f_time,i|
+		@f_times.reverse.each_with_index do |f_time, i|
 			if ! vertex.expl 
 				@s = i
-				dfs @graph, f_time 
+				dfs @graph, f_time[i] 
 			end
 		end
 	end
@@ -51,9 +51,9 @@ class Graph
 			end
 		end
 
-		graph[i].f_time = @t
-		@f_times.push(@t)
 		@t += 1
+		graph[i].f_time = @t
+		@f_times.push({@t => i})
 	end
 end
 
@@ -63,7 +63,7 @@ require "benchmark"
 
 
 g = Graph.new([[:a, :b], [:a, :c], [:a, :d], [:b, :d], [:c, :d]])
-g.dfs g.graph, :a 
+g.dfs_loop g.graph
 pp g.graph
 pp g.rev
 
