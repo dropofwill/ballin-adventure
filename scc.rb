@@ -2,56 +2,72 @@ require_relative "deep_dup"
 
 # Adjacency List Data Structure
 class Graph
-	attr_accessor :verts
-	Vertex = Struct.new(:name, :neighbours, :dist, :exp?)
+	attr_accessor :graph
+	Vertex = Struct.new(:name, :neighbours, :dist, :expl, :f_time)
 
 	# Takes an array of feature arrays
 	def initialize graph
 
 		# Setup the default to be a Vertex
-		#@verts = Hash.new{|h,k| h[k]=Vertex.new(k,[],Float::INFINITY,false)}
-		@verts = Array.new
+		@graph = Array.new
+		@graph_rev = Array.new
+		@t = 0
+		@s = nil
 
-		cur_vert = nil
-		tmp_vert = nil
-		cur_adj =	 Array.new
-
+		last_v = nil
+		last_a = []
 		graph.each do |vertex|
-			cur_vert = vertex[0] if cur_vert.nil?
-			tmp_vert = vertex[0]
-			p vertex
-			p vertex[0]
-			p vertex[1]
-			p "Cur Vert #{cur_vert} Tmp Vert #{tmp_vert}"
-			p "Cur Adj #{cur_adj}"
+			last_v = vertex[0] if last_v.nil?
 
-			# wait until a new vert appears to create the struct
-			if cur_vert == tmp_vert
-				cur_adj << vertex[1]
-				p "Cur Adj delayed at #{cur_adj}"
+			if vertex[0] == last_v
+				last_a << vertex[1]
 			else
-				p "Cur Adj added with #{cur_adj}"
-				@verts.push(Vertex.new(cur_vert, cur_adj,Float::INFINITY,false))
-				pp verts
-				cur_vert = tmp_vert
-				cur_adj.clear
-				cur_adj << vertex[1]
+				# Create the Vertex with a dup of the array
+				@graph << Vertex.new(last_v, last_a.deep_dup, Float::INFINITY, false, nil)
+				last_a.clear << vertex[1]
+				last_v = vertex[0]
 			end
 		end
+		# Need to return the last element, since the loop would skip it
+		@graph << Vertex.new(last_v, last_a, Float::INFINITY, false, nil)
+
+		return @graph
 	end
 
 	def top_scc num=5
 		@sccs = Array.new(num, 0)
 	end
 
-
 	def dfs_loop graph
 		@t = 0
 		@s = nil
+
+		@graph_rev.each_with_index do |vertex,i|
+			if ! vertex.expl 
+				dfs @graph_rev, i 
+			end
+		end
+
+		@graph.sort_by! { |x,y| x.f_time <=> y.f_time }
+		
+		@graph.each_with_index do |vertex,i|
+			if ! vertex.expl 
+				@s = i
+				dfs @graph, i
+			end
+		end
 	end
 
-	def dfs graph, init_vert
+	def dfs graph, i
+		@graph[i].expl = true
+		@graph[i].neighbours.each do |n|
+			if ! @graph[n].expl
+				dfs @graph, n
+			end
+		end
 
+		@graph[i].f_time = @t
+		@t += 1
 	end
 end
 
@@ -61,7 +77,13 @@ require "benchmark"
 
 
 g = Graph.new([[:a, :b], [:a, :c], [:a, :d], [:b, :d], [:c, :d]])
-pp g.verts
+#g = Graph.new([{v: :a,e: :b},
+							 #{v: :a,e: :c},
+							 #{v: :a,e: :d},
+							 #{v: :b,e: :d},
+			 #        {v: :c,e: :d}]);
+g.dfs g, 0 
+pp g.graph
 
 
 #data = []
@@ -86,7 +108,7 @@ pp g.verts
 
 #Benchmark.bmbm do |x|
 	#x.report("read data") do
-		#File.open("data/SCC.txt").each_line do |line|
+		#File.open("data/SCC_simple.txt").each_line do |line|
 			#vertex = line.split(" ")
 			#vertex.map! { |i| i.to_i }
 			#data << vertex
@@ -94,6 +116,6 @@ pp g.verts
 	#end
 
 	#x.report("load data") do 
-		#Graph.new data
+		#g =	Graph.new data
 	#end
 #end
