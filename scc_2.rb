@@ -60,18 +60,19 @@ class Graph
   end
 
   def dfs graph, key, dir = nil
+    p key
 		s = Stack.new key
-    graph[key].expl = true
 
     if dir == :for
       graph[key].leader = @s 
       @s_count += 1
     end
 
-    while s.size != 0
+    while s.size > 0
       key = s.pop
+      p key
+      graph[key].expl = true
       graph[key].neighbours.each do |n|
-        #p "Neighbour: #{n} #{graph[:a]}"
 
         if ! graph[n].expl
           if dir == :for
@@ -79,9 +80,9 @@ class Graph
             @s_count += 1
           end
 
-          graph[n].expl = true
+          #graph[n].expl = true
           s.push n
-
+          
           if dir == :rev
             @t += 1
             graph[key].f_time = @t
@@ -89,12 +90,9 @@ class Graph
           end
         end
       end
-    end
 
-    if dir == :rev
-      @t += 1
-      graph[key].f_time = @t
-      @f_times.push([@t, key])
+
+      p "Neighbour: #{key} #{graph[key]}"
     end
   end
 end
@@ -104,7 +102,7 @@ require "pp"
 require "benchmark"
 
 data = []
-File.open("data/SCC_1.txt").each_line do |line|
+File.open("data/SCC_2.txt").each_line do |line|
   vertex = line.gsub(/\s+/, ' ').strip.split(" ")
   vertex.map! { |i| i.to_i }
   data << [vertex[0], vertex[1]]
@@ -112,6 +110,7 @@ end
 
 graph1 = Graph.new data
 p graph1.dfs_loop graph1
+#pp graph1
 
 
 #g = Graph.new([[:a, :b], [:a, :c], [:a, :d], [:b, :d], [:c, :d]])

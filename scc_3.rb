@@ -43,7 +43,7 @@ class Graph
         dfs @rev, key, :rev
       end
     end
-    #p @f_times
+    p @f_times
 
     @f_times.reverse.each do |f_time|
       if ! @graph[f_time[1]].expl 
@@ -59,6 +59,7 @@ class Graph
   end
 
   def dfs graph, key, dir = nil
+    p key
     graph[key].expl = true
 
     if dir == :for
@@ -80,6 +81,7 @@ class Graph
       graph[key].f_time = @t
       @f_times.push([@t, key])
     end
+    p "Neighbour: #{key} #{graph[key]}"
   end
 end
 
@@ -88,7 +90,7 @@ require "pp"
 require "benchmark"
 
 data = []
-File.open("data/SCC_1.txt").each_line do |line|
+File.open("data/SCC_2.txt").each_line do |line|
   vertex = line.gsub(/\s+/, ' ').strip.split(" ")
   vertex.map! { |i| i.to_i }
   data << [vertex[0], vertex[1]]
