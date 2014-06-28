@@ -3,20 +3,26 @@ require_relative "deep_dup"
 # Adjacency List Data Structure
 class Graph
   attr_accessor :graph, :rev
-  Vertex = Struct.new(:name, :neighbours, :dist, :expl, :f_time)
+  Vertex = Struct.new(:name, :neighbours, :expl, :f_time, :leader)
 
   # Takes an array of feature arrays
   def initialize graph
-    @graph = Hash.new{|h,k| h[k]=Vertex.new(k,[],Float::INFINITY,false,nil)}
-    @rev = @graph.deep_dup
+    # Make the data entry easier with default hash values
+    @graph = Hash.new{|h,k| h[k]=Vertex.new(k,[],false,nil,nil)}
+    @rev   = Hash.new{|h,k| h[k]=Vertex.new(k,[],false,nil,nil)}
     @t = 0
     @s = nil
     @f_times = []
 
     graph.each do |(v1,v2)|
       @graph[v1].neighbours << v2
+      @graph[v2]
       @rev[v2].neighbours   << v1
+      @rev[v1]
     end
+
+    # Set the hash back to its safe default
+    @graph.default = @rev.default = nil
     return @graph
   end
 
@@ -27,33 +33,53 @@ class Graph
   def dfs_loop graph
     @t = 0
     @s = nil
+    @s_count = 0
     @f_times = []
-
+    @sccs = Array.new(5, 0)
+    
     @rev.each do |key,vertex|
+      #p "Outside check, Key: #{key} Value #{vertex}"
       if ! vertex.expl 
-        dfs @rev, vertex 
+        dfs @rev, key, :rev
       end
     end
+    #p @f_times
 
-    @f_times.reverse.each_with_index do |f_time, i|
-      if ! vertex.expl 
-        @s = i
-        dfs @graph, f_time[i] 
+    @f_times.reverse.each do |f_time|
+      if ! @graph[f_time[1]].expl 
+        @s = f_time[0]
+        dfs @graph, f_time[1], :for
       end
+      @sccs << @s_count
+      @s_count = 0
+      @sccs.sort! { |x,y| y <=> x }
+      @sccs = @sccs[0..4]
     end
+    return @sccs
   end
 
-  def dfs graph, i
-    graph[i].expl = true
-    graph[i].neighbours.each do |n|
+  def dfs graph, key, dir = nil
+    graph[key].expl = true
+
+    if dir == :for
+      graph[key].leader = @s 
+      @s_count += 1
+    end
+
+    #p "DFS init: #{graph[key]}"
+
+    graph[key].neighbours.each do |n|
+      #p "Neighbour: #{n} #{graph[:a]}"
       if ! graph[n].expl
-        dfs graph, n
+        dfs graph, n, dir
       end
     end
 
-    @t += 1
-    graph[i].f_time = @t
-    @f_times.push({@t => i})
+    if dir == :rev
+      @t += 1
+      graph[key].f_time = @t
+      @f_times.push([@t, key])
+    end
   end
 end
 
@@ -61,11 +87,21 @@ end
 require "pp"
 require "benchmark"
 
+data = []
+File.open("data/SCC.txt").each_line do |line|
+  vertex = line.gsub(/\s+/, ' ').strip.split(" ")
+  vertex.map! { |i| i.to_i }
+  data << [vertex[0], vertex[1]]
+end
 
-g = Graph.new([[:a, :b], [:a, :c], [:a, :d], [:b, :d], [:c, :d]])
-g.dfs_loop g.graph
-pp g.graph
-pp g.rev
+graph1 = Graph.new data
+#p graph1.dfs_loop graph1
+
+
+#g = Graph.new([[:a, :b], [:a, :c], [:a, :d], [:b, :d], [:c, :d]])
+#g.dfs_loop g.graph
+#pp g.graph
+#pp g.rev
 
 
 #data = []
