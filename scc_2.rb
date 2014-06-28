@@ -1,4 +1,5 @@
 require_relative "deep_dup"
+require_relative "stack"
 
 # Adjacency List Data Structure
 class Graph
@@ -43,7 +44,7 @@ class Graph
         dfs @rev, key, :rev
       end
     end
-    #p @f_times
+    p @f_times
 
     @f_times.reverse.each do |f_time|
       if ! @graph[f_time[1]].expl 
@@ -59,6 +60,7 @@ class Graph
   end
 
   def dfs graph, key, dir = nil
+		s = Stack.new key
     graph[key].expl = true
 
     if dir == :for
@@ -66,12 +68,26 @@ class Graph
       @s_count += 1
     end
 
-    #p "DFS init: #{graph[key]}"
+    while s.size != 0
+      key = s.pop
+      graph[key].neighbours.each do |n|
+        #p "Neighbour: #{n} #{graph[:a]}"
 
-    graph[key].neighbours.each do |n|
-      #p "Neighbour: #{n} #{graph[:a]}"
-      if ! graph[n].expl
-        dfs graph, n, dir
+        if ! graph[n].expl
+          if dir == :for
+            graph[key].leader = @s 
+            @s_count += 1
+          end
+
+          graph[n].expl = true
+          s.push n
+
+          if dir == :rev
+            @t += 1
+            graph[key].f_time = @t
+            @f_times.push([@t, key])
+          end
+        end
       end
     end
 
@@ -88,14 +104,14 @@ require "pp"
 require "benchmark"
 
 data = []
-File.open("data/SCC.txt").each_line do |line|
+File.open("data/SCC_1.txt").each_line do |line|
   vertex = line.gsub(/\s+/, ' ').strip.split(" ")
   vertex.map! { |i| i.to_i }
   data << [vertex[0], vertex[1]]
 end
 
 graph1 = Graph.new data
-#p graph1.dfs_loop graph1
+p graph1.dfs_loop graph1
 
 
 #g = Graph.new([[:a, :b], [:a, :c], [:a, :d], [:b, :d], [:c, :d]])
