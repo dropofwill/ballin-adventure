@@ -82,15 +82,14 @@ class Graph
 
           #graph[n].expl = true
           s.push n
-          
-          if dir == :rev
-            @t += 1
-            graph[key].f_time = @t
-            @f_times.push([@t, key])
-          end
         end
       end
 
+      if dir == :rev
+        @t += 1
+        graph[key].f_time = @t
+        @f_times.push([@t, key])
+      end
 
       p "Neighbour: #{key} #{graph[key]}"
     end
