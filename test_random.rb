@@ -39,5 +39,14 @@ p "Max: #{times.max}"
 p "Min: #{times.min}"
 p "Mean: #{mean}"
 p "Median: #{median}"
-#p "Mode: #{times.mode}"
+p "Mode: #{times.mode}"
 p "Most Common: #{times.most_common}"
+
+=begin
+Results on (0..20), 1,000,000 times
+"Max: 198"
+"Min: 22"
+"Mean: 55.527856"
+"Median: 53.0"
+"Most Common: {45=>29328, 46=>30014, 47=>30693, 48=>31185, 49=>30837, 50=>31528, 51=>31216, 52=>30555, 53 =>29884, 54=>29133}"
+=end
