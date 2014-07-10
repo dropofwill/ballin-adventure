@@ -1,0 +1,7 @@
+1, y, x, x -x z -z
+1, x, y, y -y z -z
+1, y, x, x -x z -z
+1, x, y, y -y z -z
+1, y, x, x -x z -z
+1, x, y, y -y z -z
+1, y, x, x -x z -z
