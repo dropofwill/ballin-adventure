@@ -37,7 +37,7 @@ def test_random_mike n=20, i=1000
   i.times do |x|
     count = 0
 
-    (1..n).to_a.each { |i| nums.merge!(i => false) }
+    n.times { |i| nums.merge!(i => false) }
 
     while nums.values.include? false
       nums[rand(0..n)] = true
@@ -52,7 +52,6 @@ end
 num_pics = 20
 num_trials = 1000000
 
-=begin
 times = test_random_mike num_pics, num_trials
 #times = test_random num_pics, num_trials
 times.sort!
@@ -66,7 +65,6 @@ p "Mean: #{mean}"
 p "Median: #{median}"
 p "Mode: #{times.mode}"
 p "Most Common: #{times.most_common}"
-=end
 
 =begin
 Results on (0..20), 1,000,000 times
@@ -77,10 +75,12 @@ Results on (0..20), 1,000,000 times
 "Most Common: {45=>29328, 46=>30014, 47=>30693, 48=>31185, 49=>30837, 50=>31528, 51=>31216, 52=>30555, 53 =>29884, 54=>29133}"
 =end
 
+=begin
 Benchmark.bm(2) do |x|
 	x.report("Mike's Version") { test_random_mike num_pics, num_trials }
 	x.report("Will's Versio")  { test_random num_pics, num_trials }
 end
+=end
 
 =begin
 Results of benchmark:
